@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>
+      Projeto Exame de CES-35
+    </title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Mattheus Jucá e José Neto">
+    <meta name="description" content="Projeto Exame da disciplina de CES-35 - Redes de Computadores - Aplicação chat usando socket.io">
+    
+    <link rel="stylesheet" type="text/css" href="/styles/index.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/lib/jquery.min.js"></script>
+  </head>
+  
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script type="text/javascript">
+      var socket = io();
+      $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+    </script>
+  </body>
+</html>
