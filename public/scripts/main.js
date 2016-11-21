@@ -10,8 +10,9 @@ $('#setNick').submit(function (e) {
     // data is a nickname, if the nickname was not taken.
     if (data) {
       $('#nickWrap').hide();
-      $('#chat').show();
+      $('#chatWrap').show();
     } else {
+      $('#nickname').css("border", "1px solid red");
       $('#nickError').html('That username is already taken! Try again.');
     }
   });
