@@ -19,3 +19,8 @@ socket.on('stats', function (data) {
   console.log('Connected users:', data.numUsers)
   $('#counter').html("Connected users: " + data.numUsers);
 });
+
+// Alert client when server shuts down
+socket.on('disconnect', function () {
+  alert('Failed to connect to server');
+});
