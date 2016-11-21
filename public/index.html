@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
   <head>
     <title>
       Projeto Exame de CES-35
@@ -12,29 +12,15 @@
     
     <link rel="stylesheet" type="text/css" href="/styles/index.css" />
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico" />
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/lib/jquery.min.js"></script>
   </head>
   
   <body>
     <ul id="messages"></ul>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" placeholder="Type your message here" /><button>Send</button>
     </form>
-    <script type="text/javascript">
-      // Load the socket.io-client and then connect. It defaults to trying to connect to the host that serves the page.
-      var socket = io();
-      // Get a typed message and send to server.
-      $('form').submit(function(){
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        return false;
-      });
-      // When server call chat message, print in page.
-      socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
-      });
-    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/lib/jquery.min.js"></script>
+    <script src="/scripts/main.js"></script>
   </body>
 </html>
