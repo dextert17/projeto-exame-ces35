@@ -28,22 +28,21 @@ io.on('connection', function (socket){
 			// Define the nickname of the socket and put then on nicknames vector.
 			socket.nickname = data;
 			nicknames.push(socket.nickname);
-			// Tell the client to execute 'usernames'.
-			io.sockets.emit('usernames', nicknames);
+      // Tell the client to execute 'usernames'.
+      io.sockets.emit('usernames', nicknames);
+      // Increase users counter and tell the client to execute 'stats'.
+      numUsers++;
+      io.emit('stats', { numUsers: numUsers });
+      // Log connected sockets to the console.
+      console.log(socket.nickname + ' connected');
+      console.log('Connected users:', numUsers);
 		}
 	});
-
-	// Increase users counter and tell the client to execute 'stats'.
-  numUsers++;
-  io.emit('stats', { numUsers: numUsers });
-  // Log connected sockets to the console.
-  console.log('a user connected');
-  console.log('Connected users:', numUsers);
 
   // When client emmit 'chat message', this listens and executes
   socket.on('chat message', function (data){
   	// Log chat message
-  	console.log('message: ' + data);
+  	console.log(socket.nickname + ': ' + data);
   	// Brodcasting message, tell the client to execute 'chat message'
   	io.emit('chat message', {msg: data, nickname: socket.nickname});
  	});
@@ -57,7 +56,7 @@ io.on('connection', function (socket){
   	numUsers--;
  	  io.emit('stats', { numUsers: numUsers });
  	  // Log that socket was closed.
- 	  console.log('a user disconnected');
+ 	  console.log(socket.nickname + ' disconnected');
  	  console.log('Connected users:', numUsers);
   });
 

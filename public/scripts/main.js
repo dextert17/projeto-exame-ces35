@@ -18,6 +18,14 @@ $('#setNick').submit(function (e) {
   $('#nickname').val('');
 });
 
+// Get a typed message and send data message to server.
+$('#send-message').submit(function(){
+  // Tell the server to execute 'chat message'.
+  socket.emit('chat message', $('#m').val());
+  $('#m').val('');
+  return false;
+});
+
 // When server call 'usernames', update the usernames listed in page.
 socket.on('usernames', function (data) {
   // data is a vector with all usernames.
@@ -32,14 +40,6 @@ socket.on('usernames', function (data) {
 socket.on('stats', function (data) {
   console.log('Connected users:', data.numUsers)
   $('#counter').html("Connected users: " + data.numUsers);
-});
-
-// Get a typed message and send data message to server.
-$('#send-message').submit(function(){
-  // Tell the server to execute 'chat message'.
-  socket.emit('chat message', $('#m').val());
-  $('#m').val('');
-  return false;
 });
 
 // When server call 'chat message', print in page.
