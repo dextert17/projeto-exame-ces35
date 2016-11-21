@@ -23,4 +23,8 @@ socket.on('stats', function (data) {
 // Alert client when server shuts down
 socket.on('disconnect', function () {
   alert('Failed to connect to server');
+  // Alert client when server is back
+  socket.on('connect', function() {
+    alert('Server is back');
+  })
 });
