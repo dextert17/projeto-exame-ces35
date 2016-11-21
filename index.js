@@ -13,20 +13,22 @@ app.get('/', function (req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-// Declare users counter.
+// Declare users counter and a nicknames vector.
 var numUsers = 0;
-
 var nicknames = [];
 
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
+	// When client call 'new user', verify if the nickname was alredy taken.
 	socket.on('new user', function (data, callback) {
 		if (nicknames.indexOf(data) != -1) {
 			callback(false);
 		} else {
 			callback(true);
+			// Define the nickname of the socket and put then on nicknames vector.
 			socket.nickname = data;
 			nicknames.push(socket.nickname);
+			// Tell the client to execute 'usernames'.
 			io.sockets.emit('usernames', nicknames);
 		}
 	});
