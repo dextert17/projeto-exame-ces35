@@ -13,10 +13,18 @@ app.get('/', function (req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+// Declare users counter.
+var numUsers = 0;
+
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
-	// Log connected sockets to the console
+	// Increase users counter and tell the client to execute 'stats'.
+  numUsers++;
+  io.emit('stats', { numUsers: numUsers });
+  // Log connected sockets to the console.
   console.log('a user connected');
+  console.log('Connected users:', numUsers);
+
   // When client emmit 'chat message', this listens and executes
   socket.on('chat message', function (msg){
   	// Log chat message
@@ -24,10 +32,15 @@ io.on('connection', function (socket){
   	// Brodcasting message, tell the client to execute 'chat message'
   	io.emit('chat message', msg);
  	});
+
  	// Listen on the disconnect event.
   socket.on('disconnect', function(){
-  	// Log that socket was closed.
+  	// Decrease users counter and tell the client to execute 'stats'.
+  	numUsers--;
+ 	  io.emit('stats', { numUsers: numUsers });
+ 	  // Log that socket was closed.
  	  console.log('a user disconnected');
+ 	  console.log('Connected users:', numUsers);
   });
 });
 
