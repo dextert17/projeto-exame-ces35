@@ -3,15 +3,36 @@
 var socket = io();
 
 // Get a typed message and send data message to server.
-$('form').submit(function(){
+$('#send-message').submit(function(){
   socket.emit('chat message', $('#m').val());
   $('#m').val('');
   return false;
 });
 
+$('#setNick').submit(function (e) {
+  e.preventDefault();
+  socket.emit('new user', $('#nickname').val(), function (data) {
+    if (data) {
+      $('#nickWrap').hide();
+      $('#chat').show();
+    } else {
+      $('#nickError').html('That username is already taken! Try again.');
+    }
+  });
+  $('#nickname').val('');
+});
+
+socket.on('usernames', function (data) {
+  var html = '';
+  for (i = 0; i < data.length; i++) {
+    html += data[i] + '<br/>'
+  }
+  $('#users').html(html);
+});
+
 // When server call 'chat message', print in page.
-socket.on('chat message', function (msg){
-  $('#messages').append($('<li>').text(msg));
+socket.on('chat message', function (data){
+  $('#messages').append($('<li>').html('<b>' + data.nickname + ': </b>' + data.msg));
 });
 
 // When server call 'stats', client receive data with numUsers and print in page.

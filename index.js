@@ -16,8 +16,21 @@ app.get('/', function (req, res){
 // Declare users counter.
 var numUsers = 0;
 
+var nicknames = [];
+
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
+	socket.on('new user', function (data, callback) {
+		if (nicknames.indexOf(data) != -1) {
+			callback(false);
+		} else {
+			callback(true);
+			socket.nickname = data;
+			nicknames.push(socket.nickname);
+			io.sockets.emit('usernames', nicknames);
+		}
+	});
+
 	// Increase users counter and tell the client to execute 'stats'.
   numUsers++;
   io.emit('stats', { numUsers: numUsers });
@@ -26,15 +39,18 @@ io.on('connection', function (socket){
   console.log('Connected users:', numUsers);
 
   // When client emmit 'chat message', this listens and executes
-  socket.on('chat message', function (msg){
+  socket.on('chat message', function (data){
   	// Log chat message
-  	console.log('message: ' + msg);
+  	console.log('message: ' + data);
   	// Brodcasting message, tell the client to execute 'chat message'
-  	io.emit('chat message', msg);
+  	io.emit('chat message', {msg: data, nickname: socket.nickname});
  	});
 
  	// Listen on the disconnect event.
   socket.on('disconnect', function(){
+  	if (!socket.nickname) return;
+  	nicknames.splice(nicknames.indexOf(socket.nickname), 1);
+  	io.sockets.emit('usernames', nicknames);
   	// Decrease users counter and tell the client to execute 'stats'.
   	numUsers--;
  	  io.emit('stats', { numUsers: numUsers });
@@ -42,6 +58,7 @@ io.on('connection', function (socket){
  	  console.log('a user disconnected');
  	  console.log('Connected users:', numUsers);
   });
+
 });
 
 http.listen(3000, function (){

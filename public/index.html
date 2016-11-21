@@ -15,11 +15,22 @@
   </head>
   
   <body>
-    <h2 id="counter"></h2>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" placeholder="Type your message here" /><button>Send</button>
-    </form>
+    <div id="nickWrap">
+      <p>Enter a nickname: </p>
+      <p id="nickError"></p>
+      <form id="setNick">
+        <input id="nickname"></input>
+        <input type="submit"></input>
+      </form>
+    </div>
+    <div id="chat">
+      <div id="users"></div>
+      <h2 id="counter"></h2>
+      <ul id="messages"></ul>
+      <form id="send-message" action="">
+        <input id="m" autocomplete="off" placeholder="Type your message here" /><button>Send</button>
+      </form>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/lib/jquery.min.js"></script>
     <script src="/scripts/main.js"></script>
