@@ -2,19 +2,21 @@
 <html lang="en">
   <head>
     <title>
-      ITA Chat - CES-35 Exam
+      ITA Chat - CES-35 Exam Project
     </title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Mattheus Jucá e José Neto">
-    <meta name="description" content="Projeto Exame da disciplina de CES-35 - Redes de Computadores - Aplicação chat usando socket.io">
+    <meta name="description" content="CES-35 Exam Project - Chat application with socket.io and node.js">
     
     <link rel="stylesheet" type="text/css" href="/styles/index.css" />
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico" />
   </head>
   
   <body>
+
+    <!-- Login page -->
     <div id="nickWrap">
       <h1>
         <img src="/images/Brasao_ITA_cmyk.gif" alt="Instituo Tecnológico de Aeronáutica"></img>
@@ -31,6 +33,8 @@
         <input type="submit" value="Sign in"></input>
       </form>
     </div>
+
+    <!-- Chat application -->
     <div id="chatWrap">
       <div id="info">
         <h2 id="counter"></h2>
@@ -42,8 +46,12 @@
         <input id="m" autocomplete="off" placeholder="Type your message here" /><button>Send</button>
       </form>
     </div>
+
+    <!-- import Socket.io script -->
     <script src="/socket.io/socket.io.js"></script>
+    <!-- import jquery script -->
     <script src="/lib/jquery.min.js"></script>
+    <!-- import Client script -->
     <script src="/scripts/main.js"></script>
   </body>
 </html>
