@@ -5,15 +5,20 @@ var socket = io();
 // Get a typed username and send data message to server.
 $('#setNick').submit(function (e) {
   e.preventDefault();
+  var nickname = $('#nickname').val();
   // Tell the server to execute 'new user'.
-  socket.emit('new user', $('#nickname').val(), function (data) {
+  socket.emit('new user', nickname, function (data) {
     // data is a nickname, if the nickname was not taken.
     if (data) {
       $('#nickWrap').hide();
       $('#chatWrap').show();
     } else {
       $('#nickname').css("border", "1px solid red");
-      $('#nickError').html('That username is already taken! Try again.');
+      if (nickname === '') {
+        $('#nickError').html('Please, enter a nickname');
+      } else {
+        $('#nickError').html('That nickname is already taken! Try again.');
+      }
     }
   });
   $('#nickname').val('');

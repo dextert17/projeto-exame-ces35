@@ -21,7 +21,7 @@ var nicknames = [];
 io.on('connection', function (socket){
 	// When client call 'new user', verify if the nickname was alredy taken.
 	socket.on('new user', function (data, callback) {
-		if (nicknames.indexOf(data) != -1) {
+		if (nicknames.indexOf(data) != -1 || data === '') {
 			callback(false);
 		} else {
 			callback(true);
