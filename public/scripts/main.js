@@ -8,15 +8,17 @@ $('#setNick').submit(function (e) {
   var nickname = $('#nickname').val();
   // Tell the server to execute 'new user'.
   socket.emit('new user', nickname, function (data) {
-    // data is a nickname, if the nickname was not taken.
+    // data is a nickname, if the nickname was not taken or was not empty.
     if (data) {
+      // If everything is ok, show chat room.
       $('#nickWrap').hide();
       $('#chatWrap').show();
     } else {
       $('#nickname').css("border", "1px solid red");
+      // Verify if it's a empty nickname.
       if (nickname === '') {
         $('#nickError').html('Please, enter a nickname');
-      } else {
+      } else { // Os if it's a alredy used nickname.
         $('#nickError').html('That nickname is already taken! Try again.');
       }
     }
@@ -27,7 +29,10 @@ $('#setNick').submit(function (e) {
 // Get a typed message and send data message to server.
 $('#send-message').submit(function(){
   // Tell the server to execute 'chat message'.
-  socket.emit('chat message', $('#m').val());
+  socket.emit('chat message', $('#m').val(), function (data) {
+    // If was a message with Error, the server will return this.
+    $('#messages').append($('<li>').html('<span class="error"><b>' + data + '</b></span>'));
+  });
   $('#m').val('');
   return false;
 });
@@ -49,14 +54,19 @@ socket.on('stats', function (data) {
 });
 
 // When server call 'chat message', print in page.
-socket.on('chat message', function (data){
+socket.on('chat message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + ': </b>' + data.msg));
 });
 
-// Alert client when server shuts down
+// When server call 'private message', print just for destination.
+socket.on('private message', function (data) {
+  $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private)</i><b>: </b>' + data.msg));
+});
+
+// Alert client when server shuts down.
 socket.on('disconnect', function () {
   alert('Failed to connect to server');
-  // Alert client when server is back
+  // Alert client when server is back.
   socket.on('connect', function() {
     alert('Server is back');
   })

@@ -13,23 +13,23 @@ app.get('/', function (req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-// Declare users counter and a nicknames vector.
+// Declare users counter and a users object.
 var numUsers = 0;
-var nicknames = [];
+var users = {};
 
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
 	// When client call 'new user', verify if the nickname was alredy taken.
 	socket.on('new user', function (data, callback) {
-		if (nicknames.indexOf(data) != -1 || data === '') {
+		if (data in users || data === '') {
 			callback(false);
 		} else {
 			callback(true);
-			// Define the nickname of the socket and put then on nicknames vector.
+			// Define the nickname of the socket and put then on users.
 			socket.nickname = data;
-			nicknames.push(socket.nickname);
+      users[socket.nickname] = socket;
       // Tell the client to execute 'usernames'.
-      io.sockets.emit('usernames', nicknames);
+      io.sockets.emit('usernames', Object.keys(users));
       // Increase users counter and tell the client to execute 'stats'.
       numUsers++;
       io.emit('stats', { numUsers: numUsers });
@@ -39,23 +39,54 @@ io.on('connection', function (socket){
 		}
 	});
 
-  // When client emmit 'chat message', this listens and executes
-  socket.on('chat message', function (data){
-  	// Log chat message
-  	console.log(socket.nickname + ': ' + data);
-  	// Brodcasting message, tell the client to execute 'chat message'
-  	io.emit('chat message', {msg: data, nickname: socket.nickname});
+  // When client emmit 'chat message', this listens and executes.
+  socket.on('chat message', function (data, callback){
+  	// Remove whitespace from both sides of data message.
+    var msg = data.trim();
+    // Verify if it is a private message.
+    if(msg.substr(0,3) === '/w ') {
+      // Remove the code of private message.
+      msg = msg.substr(3);
+      var aux = msg.indexOf(' ');
+      // Verify if data has a message to send.
+      if (aux !== -1) {
+        // Take the name of destination.
+        var name = msg.substr(0, aux);
+        // Take only the message.
+        var msg = msg.substring(aux + 1);
+        // Verify if the user is in chat.
+        if (name in users) {
+          // Log the private message
+          console.log(socket.nickname + ' private message to ' + name + ': ' + msg);
+          // Send tha message, tell only the target client to execute 'private message'.
+          users[name].emit('private message', {msg: msg, nickname: socket.nickname});
+        } else {
+          // Message in case of the user ins not in chat.
+          callback('Error! Enter a valid user.');
+        }
+      } else {
+        // Message in case of don't have a message to send.
+        callback('Error! Please enter a message for your whisper.');
+      }
+    } else {
+      // Log the message
+      console.log(socket.nickname + ': ' + msg);
+  	  // Brodcasting message, tell all clients to execute 'chat message'.
+  	  io.emit('chat message', {msg: msg, nickname: socket.nickname});
+    }
  	});
 
  	// Listen on the disconnect event.
   socket.on('disconnect', function(){
+    // Don't do nothing if the user doesn't put nickname yet
   	if (!socket.nickname) return;
-  	nicknames.splice(nicknames.indexOf(socket.nickname), 1);
-  	io.sockets.emit('usernames', nicknames);
+    // Remove the user from users and tell the client to execute 'usernames'
+    delete users[socket.nickname];
+  	io.sockets.emit('usernames', Object.keys(users));
   	// Decrease users counter and tell the client to execute 'stats'.
   	numUsers--;
  	  io.emit('stats', { numUsers: numUsers });
- 	  // Log that socket was closed.
+ 	  // Log that socket was closed by the client.
  	  console.log(socket.nickname + ' disconnected');
  	  console.log('Connected users:', numUsers);
   });

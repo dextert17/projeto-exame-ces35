@@ -56,9 +56,6 @@ body {
   box-sizing: border-box;
   width: 250px;
 }
-#nickError {
-	color: red;
-}
 #send-message {
 	background: #000;
 	padding: 3px;
@@ -103,4 +100,7 @@ body {
 }
 #chatWrap {
 	display: none;
+}
+.error {
+	color: red;
 }
