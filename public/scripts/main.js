@@ -5,7 +5,7 @@ var socket = io();
 // Get a typed username and send data message to server.
 $('#setNick').submit(function (e) {
   e.preventDefault();
-  var nickname = $('#nickname').val();
+  var nickname = $('#nickField').val();
   // Tell the server to execute 'new user'.
   socket.emit('new user', nickname, function (data) {
     // data is a nickname, if the nickname was not taken or was not empty.
@@ -14,7 +14,7 @@ $('#setNick').submit(function (e) {
       $('#nickWrap').hide();
       $('#chatWrap').show();
     } else {
-      $('#nickname').css("border", "1px solid red");
+      $('#nickField').css("border", "1px solid red");
       // Verify if it's a empty nickname.
       if (nickname === '') {
         $('#nickError').html('Please, enter a nickname');
@@ -23,7 +23,7 @@ $('#setNick').submit(function (e) {
       }
     }
   });
-  $('#nickname').val('');
+  $('#nickField').val('');
 });
 
 // Get a typed message and send data message to server.
@@ -42,7 +42,7 @@ socket.on('usernames', function (data) {
   // data is a vector with all usernames.
   var html = '';
   for (i = 0; i < data.length; i++) {
-    html += data[i] + '<br/>'
+    html += '<span id="nickname" onclick="privateMessage($(this).text())">' + data[i] + '</span>'
   }
   $('#users').html(html);
 });
@@ -76,3 +76,8 @@ socket.on('disconnect', function () {
     alert('Server is back');
   })
 });
+
+// javaScript functions
+function privateMessage (data) {
+  $('#m').val('/w ' + data + ' ');
+}

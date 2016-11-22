@@ -47,7 +47,7 @@ body {
   margin: .5em 0;
   font-weight: bold;
 }
-#nickname {
+#nickField {
   padding: 6px 10px;
   display: inline-block;
   text-align: center;
@@ -100,6 +100,15 @@ body {
 }
 #chatWrap {
 	display: none;
+}
+#nickname {
+	width: 100%;
+	display: block;
+	padding: 5px;
+}
+#nickname:hover {
+	background-color: lightgray;
+	cursor: pointer;
 }
 .error {
 	color: red;
