@@ -44,7 +44,7 @@ io.on('connection', function (socket){
   	// Remove whitespace from both sides of data message.
     var msg = data.trim();
     // Verify if it is a private message.
-    if(msg.substr(0,3) === '/w ') {
+    if(msg.substr(0,3) === '/w ' || msg.substr(0,3) === '\\w ') {
       // Remove the code of private message.
       msg = msg.substr(3);
       var aux = msg.indexOf(' ');
@@ -58,8 +58,13 @@ io.on('connection', function (socket){
         if (name in users) {
           // Log the private message
           console.log(socket.nickname + ' private message to ' + name + ': ' + msg);
-          // Send tha message, tell only the target client to execute 'private message'.
+          // Send the message, tell only the target client to execute 'private message'.
           users[name].emit('private message', {msg: msg, nickname: socket.nickname});
+          // Verify if i'm not my target.
+          if (name !== socket.nickname) {
+            // Now tell the sender client to execute 'my private message'.
+            socket.emit('my private message', {msg: msg, nickname: socket.nickname, target: name});
+          }
         } else {
           // Message in case of the user ins not in chat.
           callback('Error! Enter a valid user.');
@@ -70,7 +75,7 @@ io.on('connection', function (socket){
       }
     } else {
       // Log the message
-      console.log(socket.nickname + ': ' + msg);
+      console.log(socket.nickname + ' public message: ' + msg);
   	  // Brodcasting message, tell all clients to execute 'chat message'.
   	  io.emit('chat message', {msg: msg, nickname: socket.nickname});
     }

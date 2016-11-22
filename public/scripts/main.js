@@ -63,6 +63,11 @@ socket.on('private message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private)</i><b>: </b>' + data.msg));
 });
 
+// When server call 'my private message', print just for me.
+socket.on('my private message', function (data) {
+  $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private to ' + data.target + ')</i><b>: </b>' + data.msg));
+});
+
 // Alert client when server shuts down.
 socket.on('disconnect', function () {
   alert('Failed to connect to server');
