@@ -24,8 +24,15 @@
         Wellcome to ITA Chat
       </h1>
       <br />
-      <p id="label">Enter a nickname: </p>
-      <form id="setNick">
+      <form id="setInfos">
+        <p id="label">Choose a room</p>
+        <br />
+        <input type="radio" name="room" value="room1" checked> Room1<br />
+        <input type="radio" name="room" value="room2"> Room2<br />
+        <input type="radio" name="room" value="room3"> Room3
+        <br /> <br />
+        <p id="label">Enter a nickname: </p>
+        <br />
         <input id="nickField"></input>
         <br />
         <p id="nickError" class="error"></p>
@@ -37,6 +44,7 @@
     <!-- Chat application -->
     <div id="chatWrap">
       <div id="info">
+        <div id="actualRoom"></div>
         <h2 id="counter"></h2>
         <br />
         <p><i>Click on a user to send a private message</p></i>

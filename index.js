@@ -22,17 +22,17 @@ var rooms = ['room1','room2','room3'];
 io.on('connection', function (socket){
 	// When client call 'new user', verify if the nickname was alredy taken.
 	socket.on('new user', function (data, callback) {
-		if (data in users || data === '') {
+		if (data.nickname in users || data.nickname === '') {
 			callback(false);
 		} else {
 			callback(true);
 			// Define the nickname of the socket and put then on users.
-			socket.nickname = data;
+			socket.nickname = data.nickname;
       users[socket.nickname] = socket;
       // store the room name in the socket session for this client.
-      socket.room = 'room1';
+      socket.room = '\'' + data.room + '\'';
       // send client to room 1
-      socket.join('room1');
+      socket.join(socket.room);
       // Tell the client to execute 'usernames'.
       io.sockets.emit('usernames', Object.keys(users));
       // Increase users counter and tell the client to execute 'stats'.

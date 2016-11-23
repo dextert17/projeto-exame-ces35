@@ -3,16 +3,18 @@
 var socket = io();
 
 // Get a typed username and send data message to server.
-$('#setNick').submit(function (e) {
+$('#setInfos').submit(function (e) {
   e.preventDefault();
   var nickname = $('#nickField').val();
+  var room = $('input[name=room]:checked').val();
   // Tell the server to execute 'new user'.
-  socket.emit('new user', nickname, function (data) {
+  socket.emit('new user', { nickname: nickname, room: room }, function (data) {
     // data is a nickname, if the nickname was not taken or was not empty.
     if (data) {
       // If everything is ok, show chat room.
       $('#nickWrap').hide();
       $('#chatWrap').show();
+      $('#actualRoom').html('<b>Room: </b>' + room);
     } else {
       $('#nickField').css("border", "1px solid red");
       // Verify if it's a empty nickname.
