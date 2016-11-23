@@ -8,7 +8,6 @@ var io = require('socket.io')(http);
 
 // Routing
 app.use(express.static(__dirname + '/public'));
-
 app.get('/', function (req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -16,6 +15,8 @@ app.get('/', function (req, res){
 // Declare users counter and a users object.
 var numUsers = 0;
 var users = {};
+// rooms which are currently available in chat
+var rooms = ['room1','room2','room3'];
 
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
@@ -28,6 +29,10 @@ io.on('connection', function (socket){
 			// Define the nickname of the socket and put then on users.
 			socket.nickname = data;
       users[socket.nickname] = socket;
+      // store the room name in the socket session for this client.
+      socket.room = 'room1';
+      // send client to room 1
+      socket.join('room1');
       // Tell the client to execute 'usernames'.
       io.sockets.emit('usernames', Object.keys(users));
       // Increase users counter and tell the client to execute 'stats'.
@@ -36,6 +41,8 @@ io.on('connection', function (socket){
       // Log connected sockets to the console.
       console.log(socket.nickname + ' connected');
       console.log('Connected users:', numUsers);
+      // Tell the client to execute 'update rooms'
+      socket.emit('update rooms', rooms, 'room1');
 		}
 	});
 
@@ -77,9 +84,20 @@ io.on('connection', function (socket){
       // Log the message
       console.log(socket.nickname + ' public message: ' + msg);
   	  // Brodcasting message, tell all clients to execute 'chat message'.
-  	  io.emit('chat message', {msg: msg, nickname: socket.nickname});
+  	  io.in(socket.room).emit('chat message', {msg: msg, nickname: socket.nickname});
     }
  	});
+
+  socket.on('switch room', function (newroom) {
+    // leave the current room (stored in session)
+    socket.leave(socket.room);
+    // join new room, received as function parameter
+    socket.join(newroom);
+    // update socket session room title
+    socket.room = newroom;
+    // Tell the client to execute 'update rooms'.
+    socket.emit('update rooms', rooms, newroom);
+  });
 
  	// Listen on the disconnect event.
   socket.on('disconnect', function(){
@@ -88,6 +106,8 @@ io.on('connection', function (socket){
     // Remove the user from users and tell the client to execute 'usernames'
     delete users[socket.nickname];
   	io.sockets.emit('usernames', Object.keys(users));
+    // Remove the socket from the room
+    socket.leave(socket.room);
   	// Decrease users counter and tell the client to execute 'stats'.
   	numUsers--;
  	  io.emit('stats', { numUsers: numUsers });

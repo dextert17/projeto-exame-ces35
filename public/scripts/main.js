@@ -68,6 +68,19 @@ socket.on('my private message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private to ' + data.target + ')</i><b>: </b>' + data.msg));
 });
 
+// When server call update rooms
+socket.on('update rooms', function (rooms, current_room) {
+  $('#rooms').empty();
+  $.each(rooms, function (key, value) {
+    if(value == current_room) {
+      $('#rooms').append('<div>' + value + '</div>');
+    }
+    else {
+      $('#rooms').append('<div><a href="#" onclick="switchRoom($(this).text())">' + value + '</a></div>');
+    }
+  });
+});
+
 // Alert client when server shuts down.
 socket.on('disconnect', function () {
   alert('Failed to connect to server');
@@ -80,4 +93,8 @@ socket.on('disconnect', function () {
 // javaScript functions
 function privateMessage (data) {
   $('#m').val('/w ' + data + ' ');
+}
+
+function switchRoom (room) {
+  socket.emit('switch room', '\'' + room + '\'');
 }
