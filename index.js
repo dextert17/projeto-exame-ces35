@@ -15,7 +15,7 @@ app.get('/', function (req, res){
 // Declare users counter and a users object.
 var numUsers = 0;
 var users = {};
-// rooms which are currently available in chat
+// Rooms which are currently available in chat.
 var rooms = ['room1','room2','room3'];
 
 // Listen on the connection event for incoming sockets.
@@ -29,12 +29,21 @@ io.on('connection', function (socket){
 			// Define the nickname of the socket and put then on users.
 			socket.nickname = data.nickname;
       users[socket.nickname] = socket;
-      // store the room name in the socket session for this client.
-      socket.room = '\'' + data.room + '\'';
-      // send client to room 1
+      // Store the room name in the socket session for this client.
+      socket.room = data.room;
+      // Send client to its room.
       socket.join(socket.room);
-      // Tell the client to execute 'usernames'.
-      io.sockets.emit('usernames', Object.keys(users));
+      // I want to send to the client only the usernames in same room.
+      // The code above is for it.
+      var aux = Object.keys(users);
+      var nicksinroom = Object.keys(users);
+      for (i = 0; i < aux.length; i++) {
+        if (users[aux[i]].room !== socket.room) {
+          nicksinroom.splice(nicksinroom.indexOf(aux[i]), 1);
+        }
+      }
+      // Tell the clients in same room to execute 'usernames'.
+      io.in(socket.room).emit('usernames', nicksinroom);
       // Increase users counter and tell the client to execute 'stats'.
       numUsers++;
       io.emit('stats', { numUsers: numUsers });
@@ -88,12 +97,13 @@ io.on('connection', function (socket){
     }
  	});
 
+  // When client emmit 'switch room', this listens and executes.
   socket.on('switch room', function (newroom) {
-    // leave the current room (stored in session)
+    // Leave the current room (stored in session).
     socket.leave(socket.room);
-    // join new room, received as function parameter
+    // Join new room, received as function parameter.
     socket.join(newroom);
-    // update socket session room title
+    // Update socket session room title.
     socket.room = newroom;
     // Tell the client to execute 'update rooms'.
     socket.emit('update rooms', rooms, newroom);
@@ -105,8 +115,18 @@ io.on('connection', function (socket){
   	if (!socket.nickname) return;
     // Remove the user from users and tell the client to execute 'usernames'
     delete users[socket.nickname];
-  	io.sockets.emit('usernames', Object.keys(users));
-    // Remove the socket from the room
+    // I want to send to the client only the usernames in same room.
+    // The code above is for it.
+    var aux = Object.keys(users);
+    var nicksinroom = Object.keys(users);
+    for (i = 0; i < aux.length; i++) {
+      if (users[aux[i]].room !== socket.room) {
+        nicksinroom.splice(nicksinroom.indexOf(aux[i]), 1);
+      }
+    }
+    // Tell the clients in same room to execute 'usernames'.
+  	io.in(socket.room).emit('usernames', nicksinroom);
+    // Remove the socket from the room.
     socket.leave(socket.room);
   	// Decrease users counter and tell the client to execute 'stats'.
   	numUsers--;

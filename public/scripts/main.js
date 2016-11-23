@@ -6,7 +6,8 @@ var socket = io();
 $('#setInfos').submit(function (e) {
   e.preventDefault();
   var nickname = $('#nickField').val();
-  var room = $('input[name=room]:checked').val();
+  var room = '';
+  room = '\'' + $('input[name=room]:checked').val() + '\'';
   // Tell the server to execute 'new user'.
   socket.emit('new user', { nickname: nickname, room: room }, function (data) {
     // data is a nickname, if the nickname was not taken or was not empty.
@@ -98,5 +99,5 @@ function privateMessage (data) {
 }
 
 function switchRoom (room) {
-  socket.emit('switch room', '\'' + room + '\'');
+  socket.emit('switch room', room);
 }
