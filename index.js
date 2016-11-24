@@ -12,7 +12,7 @@ app.get('/', function (req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-// Declare users counter and a users object.
+// Declare total users counter and a users object.
 var numUsers = 0;
 var users = {};
 // Rooms which are currently available in chat.
@@ -46,9 +46,12 @@ io.on('connection', function (socket){
       io.in(socket.room).emit('usernames', nicksinroom);
       // Increase users counter and tell the client to execute 'stats'.
       numUsers++;
-      io.emit('stats', { numUsers: numUsers });
+      // We want that the client show only the quantity of users in its room.
+      roomUsers = nicksinroom.length;
+      io.in(socket.room).emit('stats', { numUsers: roomUsers });
       // Log connected sockets to the console.
       console.log(socket.nickname + ' connected');
+      // The server know the total of users.
       console.log('Connected users:', numUsers);
       // Tell the client to execute 'update rooms'
       socket.emit('update rooms', rooms, 'room1');
@@ -126,14 +129,17 @@ io.on('connection', function (socket){
     }
     // Tell the clients in same room to execute 'usernames'.
   	io.in(socket.room).emit('usernames', nicksinroom);
-    // Remove the socket from the room.
-    socket.leave(socket.room);
   	// Decrease users counter and tell the client to execute 'stats'.
   	numUsers--;
- 	  io.emit('stats', { numUsers: numUsers });
+    // We want that the client show only the quantity of users in its room.
+    roomUsers = nicksinroom.length;
+ 	  io.in(socket.room).emit('stats', { numUsers: roomUsers });
  	  // Log that socket was closed by the client.
  	  console.log(socket.nickname + ' disconnected');
+    // The server know the total of users.
  	  console.log('Connected users:', numUsers);
+    // Remove the socket from the room.
+    socket.leave(socket.room);
   });
 
 });
