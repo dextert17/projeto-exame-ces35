@@ -16,7 +16,7 @@ app.get('/', function (req, res){
 var numUsers = 0;
 var users = {};
 // Rooms which are currently available in chat.
-var rooms = ['room1','room2','room3'];
+var rooms = ['Dijkstra','Turing','Rejewski'];
 
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
@@ -54,7 +54,7 @@ io.on('connection', function (socket){
       // The server know the total of users.
       console.log('Connected users:', numUsers);
       // Tell the client to execute 'update rooms'
-      socket.emit('update rooms', rooms, 'room1');
+      socket.emit('update rooms', rooms, 'Dijkstra');
 		}
 	});
 

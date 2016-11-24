@@ -15,7 +15,10 @@ $('#setInfos').submit(function (e) {
       // If everything is ok, show chat room.
       $('#nickWrap').hide();
       $('#chatWrap').show();
-      $('#actualRoom').html('<b>Room: </b>' + room);
+      $('#room').html(
+        '<h1><img src="/images/Brasao_ITA_cmyk.gif" alt="Instituto Tecnológico de Aeronáutica"></img>ITA Chat - Room: '
+        + room
+        + '</h1>');
     } else {
       $('#nickField').css("border", "1px solid red");
       // Verify if it's a empty nickname.
