@@ -105,8 +105,16 @@ io.on('connection', function (socket){
     nicksinoldroom = nicksInRoom(oldroom);
     // Tell the clients in same room to execute 'usernames'.
     io.in(socket.room).emit('usernames', nicksinroom);
+    // We want that the client show only the quantity of users in its room.
+    roomUsers = nicksinroom.length;
+    // Tell the clients in same room to execute 'stats'.
+    io.in(socket.room).emit('stats', { numUsers: roomUsers });
     // Tell the clients in old room to execute 'usernames'.
     io.in(oldroom).emit('usernames', nicksinoldroom);
+    // We want that the client show only the quantity of users in its room.
+    roomUsers = nicksinoldroom.length;
+    // Tell the clients in old room to execute 'stats'.
+    io.in(oldroom).emit('stats', { numUsers: roomUsers });
     // Tell the client to execute 'update rooms'.
     socket.emit('update rooms', rooms, newroom);
   });
