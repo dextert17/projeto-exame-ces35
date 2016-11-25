@@ -80,8 +80,9 @@ socket.on('update rooms', function (rooms, current_room) {
   // Atualize the rooms list.
   $('#rooms').empty();
   $.each(rooms, function (key, value) {
-    if(value == current_room) {
-      $('#rooms').append('<div>' + value + '</div>');
+    roomName = '\'' + value + '\'';
+    if(roomName == current_room) {
+      $('#rooms').append('<div id="current_room">' + value + '</div>');
     }
     else {
       $('#rooms').append('<div><a href="#" onclick="switchRoom($(this).text())">' + value + '</a></div>');
@@ -104,5 +105,6 @@ function privateMessage (data) {
 }
 
 function switchRoom (room) {
+  room = '\'' + room + '\'';
   socket.emit('switch room', room);
 }

@@ -164,6 +164,9 @@ input[type="radio"]:checked + span {
 	background-color: lightgray;
 	cursor: pointer;
 }
+#current_room {
+	font-weight: bold;
+}
 .error {
 	color: red;
 }
