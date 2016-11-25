@@ -6,6 +6,38 @@
 body {
 	font: 13px Helvetica, Arial;
 }
+input[type="radio"] {
+  visibility: hidden;
+  display: none;
+}
+input[type="radio"] + span {
+  padding: 5px;
+	background-color: #002F63;
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	display: table-cell;
+	vertical-align: middle;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+  outline: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: larger;
+  border-radius: 7px;
+  box-shadow: 0 4px #999;
+}
+input[type="radio"]:checked + span {
+  background-color: #001E40;
+  box-shadow: 0 2px #666;
+  transform: translateY(3px);
+}
+#roomSelector {
+	display: inline-table;
+	border-collapse: separate;
+	border-spacing: 5px;
+}
 #nickWrap {
 	text-align: center;
 }
@@ -42,7 +74,7 @@ body {
   box-shadow: 0 2px #666;
   transform: translateY(3px);
 }
-#label {
+#title {
 	display: inline-block;
   margin: .5em 0;
   font-weight: bold;

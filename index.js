@@ -54,7 +54,7 @@ io.on('connection', function (socket){
       // The server know the total of users.
       console.log('Connected users:', numUsers);
       // Tell the client to execute 'update rooms'
-      socket.emit('update rooms', rooms, 'Dijkstra');
+      socket.emit('update rooms', rooms, socket.room);
 		}
 	});
 

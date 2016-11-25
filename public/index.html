@@ -25,13 +25,22 @@
       </h1>
       <br />
       <form id="setInfos">
-        <p id="label">Choose a room</p>
+        <p id="title">Choose a room</p>
         <br />
-        <input type="radio" name="room" value="Dijkstra" checked> Dijkstra<br />
-        <input type="radio" name="room" value="Turing"> Turing<br />
-        <input type="radio" name="room" value="Rejewski"> Rejewski
-        <br /> <br />
-        <p id="label">Enter a nickname: </p>
+        <label id="roomSelector">
+          <input type="radio" name="room" value="Dijkstra" checked>
+          <span>Dijkstra</span>
+        </label>
+        <label id="roomSelector">
+          <input type="radio" name="room" value="Turing">
+          <span>Turing</span>
+        </label>
+        <label id="roomSelector">
+          <input type="radio" name="room" value="Rejewski">
+          <span>Rejewski</span>
+        </label> <br />
+        <br />
+        <p id="title">Enter a nickname: </p>
         <br />
         <input id="nickField"></input>
         <br />
