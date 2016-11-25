@@ -15,10 +15,6 @@ $('#setInfos').submit(function (e) {
       // If everything is ok, show chat room.
       $('#nickWrap').hide();
       $('#chatWrap').show();
-      $('#room').html(
-        '<h1><img src="/images/Brasao_ITA_cmyk.gif" alt="Instituto Tecnológico de Aeronáutica"></img>ITA Chat - Room: '
-        + room
-        + '</h1>');
     } else {
       $('#nickField').css("border", "1px solid red");
       // Verify if it's a empty nickname.
@@ -74,8 +70,14 @@ socket.on('my private message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private to ' + data.target + ')</i><b>: </b>' + data.msg));
 });
 
-// When server call update rooms
+// When server call update rooms.
 socket.on('update rooms', function (rooms, current_room) {
+  // Atualize the room title.
+  $('#room').html(
+        '<h1><img src="/images/Brasao_ITA_cmyk.gif" alt="Instituto Tecnológico de Aeronáutica"></img>ITA Chat - Room: '
+        + current_room
+        + '</h1>');
+  // Atualize the rooms list.
   $('#rooms').empty();
   $.each(rooms, function (key, value) {
     if(value == current_room) {
