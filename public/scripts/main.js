@@ -34,6 +34,7 @@ $('#send-message').submit(function(){
   socket.emit('chat message', $('#m').val(), function (data) {
     // If was a message with Error, the server will return this.
     $('#messages').append($('<li>').html('<span class="error"><b>' + data + '</b></span>'));
+    autoScroolY();
   });
   $('#m').val('');
   return false;
@@ -58,16 +59,19 @@ socket.on('stats', function (data) {
 // When server call 'chat message', print in page.
 socket.on('chat message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + ': </b>' + data.msg));
+  autoScroolY();
 });
 
 // When server call 'private message', print just for destination.
 socket.on('private message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private)</i><b>: </b>' + data.msg));
+  autoScroolY();
 });
 
 // When server call 'my private message', print just for me.
 socket.on('my private message', function (data) {
   $('#messages').append($('<li>').html('<b>' + data.nickname + '</b><i> (private to ' + data.target + ')</i><b>: </b>' + data.msg));
+  autoScroolY();
 });
 
 // When server call update rooms.
@@ -93,21 +97,25 @@ socket.on('update rooms', function (data) {
 // When server call 'enter in room', print just for destination.
 socket.on('enter in room', function (data) {
   $('#messages').append($('<li>').html('<span class="alert"><i><b>' + data + '</b> join in room</i></span>'));
+  autoScroolY();
 });
 
 // When server call 'I enter in room', print just for destination.
 socket.on('I enter in room', function (data) {
   $('#messages').append($('<li>').html('<span class="alert"><i>You join in room <b>' + data + '</b></i></span>'));
+  autoScroolY();
 });
 
 // When server call 'leave room', print just for destination.
 socket.on('leave room', function (data) {
   $('#messages').append($('<li>').html('<span class="alert"><i><b>' + data + '</b> leave room</i></span>'));
+  autoScroolY();
 });
 
 // When server call 'I leave room', print just for destination.
 socket.on('I leave room', function (data) {
   $('#messages').append($('<li>').html('<span class="alert"><i>You leave room <b>' + data + '</b></i></span>'));
+  autoScroolY();
 });
 
 // Alert client when server shuts down.
@@ -127,4 +135,8 @@ function privateMessage (data) {
 function switchRoom (room) {
   room = '\'' + room + '\'';
   socket.emit('switch room', room);
+}
+
+function autoScroolY () {
+  window.scrollTo(0,document.body.scrollHeight);
 }
