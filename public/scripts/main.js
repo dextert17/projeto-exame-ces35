@@ -44,7 +44,7 @@ socket.on('usernames', function (data) {
   // data is a vector with all usernames.
   var html = '';
   for (i = 0; i < data.length; i++) {
-    html += '<span id="nickname" onclick="privateMessage($(this).text())">' + data[i] + '</span>'
+    html += '<span id="text-selector" onclick="privateMessage($(this).text())">' + data[i] + '</span>'
   }
   $('#users').html(html);
 });
@@ -82,32 +82,32 @@ socket.on('update rooms', function (data) {
   $.each(data.rooms, function (key, value) {
     roomName = '\'' + value + '\'';
     if(roomName == data.current_room) {
-      $('#rooms').append('<div id="current_room">' + value + '</div>');
+      $('#rooms').append('<span style="width: 100%; display: block; padding: 5px;"><b>' + value + '</b></span>');
     }
     else {
-      $('#rooms').append('<div><a href="#" onclick="switchRoom($(this).text())">' + value + '</a></div>');
+      $('#rooms').append('<span id="text-selector" onclick="switchRoom($(this).text())">' + value + '</span>');
     }
   });
 });
 
 // When server call 'enter in room', print just for destination.
 socket.on('enter in room', function (data) {
-  $('#messages').append($('<li>').html('<span class="alert"><b>' + data + '</b> join in room</span>'));
+  $('#messages').append($('<li>').html('<span class="alert"><i><b>' + data + '</b> join in room</i></span>'));
 });
 
 // When server call 'I enter in room', print just for destination.
 socket.on('I enter in room', function (data) {
-  $('#messages').append($('<li>').html('<span class="alert">You join in room <b>' + data + '</b></span>'));
+  $('#messages').append($('<li>').html('<span class="alert"><i>You join in room <b>' + data + '</b></i></span>'));
 });
 
 // When server call 'leave room', print just for destination.
 socket.on('leave room', function (data) {
-  $('#messages').append($('<li>').html('<span class="alert"><b>' + data + '</b> leave room</span>'));
+  $('#messages').append($('<li>').html('<span class="alert"><i><b>' + data + '</b> leave room</i></span>'));
 });
 
 // When server call 'I leave room', print just for destination.
 socket.on('I leave room', function (data) {
-  $('#messages').append($('<li>').html('<span class="alert">You leave room <b>' + data + '</b></span>'));
+  $('#messages').append($('<li>').html('<span class="alert"><i>You leave room <b>' + data + '</b></i></span>'));
 });
 
 // Alert client when server shuts down.
