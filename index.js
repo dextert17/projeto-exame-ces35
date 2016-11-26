@@ -42,11 +42,15 @@ io.on('connection', function (socket){
       roomUsers = nicksinroom.length;
       io.in(socket.room).emit('stats', { numUsers: roomUsers });
       // Log connected sockets to the console.
-      console.log(socket.nickname + ' connected');
+      console.log(socket.nickname + ' join in room ' + socket.room);
       // The server know the total of users.
       console.log('Connected users:', numUsers);
-      // Tell the client to execute 'update rooms'
-      socket.emit('update rooms', rooms, socket.room);
+      // Tell only the client that enter to execute 'update rooms'.
+      socket.emit('update rooms', { rooms: rooms, current_room: socket.room });
+      // Alert clients in room that i'm in.
+      socket.broadcast.in(socket.room).emit('enter in room', socket.nickname);
+      // Tell to me that i join in room.
+      socket.emit('I enter in room', socket.room);
 		}
 	});
 
@@ -86,7 +90,7 @@ io.on('connection', function (socket){
       }
     } else {
       // Log the message
-      console.log(socket.nickname + ' public message: ' + msg);
+      console.log('[ROOM ' + socket.room + '] ' + socket.nickname + ' public message: ' + msg);
   	  // Brodcasting message, tell all clients to execute 'chat message'.
   	  io.in(socket.room).emit('chat message', {msg: msg, nickname: socket.nickname});
     }
@@ -101,6 +105,10 @@ io.on('connection', function (socket){
     // Update socket session room title.
     oldroom = socket.room;
     socket.room = newroom;
+    // Log the room change.
+    console.log(socket.nickname + ' leave room ' + oldroom);
+    console.log(socket.nickname + ' join in room ' + newroom);
+    // Atualize the users list for clients in old room in new room.
     nicksinroom = nicksInRoom(newroom);
     nicksinoldroom = nicksInRoom(oldroom);
     // Tell the clients in same room to execute 'usernames'.
@@ -115,8 +123,16 @@ io.on('connection', function (socket){
     roomUsers = nicksinoldroom.length;
     // Tell the clients in old room to execute 'stats'.
     io.in(oldroom).emit('stats', { numUsers: roomUsers });
-    // Tell the client to execute 'update rooms'.
-    socket.emit('update rooms', rooms, newroom);
+    // Tell only the client has change to execute 'update rooms'.
+    socket.emit('update rooms', { rooms: rooms, current_room: socket.room });
+    // Alert clients in old room that i'm out.
+    socket.broadcast.in(oldroom).emit('leave room', socket.nickname);
+    // Tell to me that I leave room.
+    socket.emit('I leave room', oldroom);
+    // Alert clients in room that i'm in.
+    socket.broadcast.in(socket.room).emit('enter in room', socket.nickname);
+    // Tell to me that i join in room.
+    socket.emit('I enter in room', socket.room);
   });
 
  	// Listen on the disconnect event.
@@ -133,8 +149,10 @@ io.on('connection', function (socket){
     // We want that the client show only the quantity of users in its room.
     roomUsers = nicksinroom.length;
  	  io.in(socket.room).emit('stats', { numUsers: roomUsers });
+    // Alert clients in room that i'm out.
+    socket.broadcast.in(socket.room).emit('leave room', socket.nickname);
  	  // Log that socket was closed by the client.
- 	  console.log(socket.nickname + ' disconnected');
+    console.log(socket.nickname + ' leave room ' + socket.room);
     // The server know the total of users.
  	  console.log('Connected users:', numUsers);
     // Remove the socket from the room.

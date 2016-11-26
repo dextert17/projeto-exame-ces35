@@ -71,23 +71,43 @@ socket.on('my private message', function (data) {
 });
 
 // When server call update rooms.
-socket.on('update rooms', function (rooms, current_room) {
+socket.on('update rooms', function (data) {
   // Atualize the room title.
   $('#room').html(
         '<h1><img src="/images/Brasao_ITA_cmyk.gif" alt="Instituto Tecnológico de Aeronáutica"></img>ITA Chat - Room: '
-        + current_room
+        + data.current_room
         + '</h1>');
   // Atualize the rooms list.
   $('#rooms').empty();
-  $.each(rooms, function (key, value) {
+  $.each(data.rooms, function (key, value) {
     roomName = '\'' + value + '\'';
-    if(roomName == current_room) {
+    if(roomName == data.current_room) {
       $('#rooms').append('<div id="current_room">' + value + '</div>');
     }
     else {
       $('#rooms').append('<div><a href="#" onclick="switchRoom($(this).text())">' + value + '</a></div>');
     }
   });
+});
+
+// When server call 'enter in room', print just for destination.
+socket.on('enter in room', function (data) {
+  $('#messages').append($('<li>').html('<span class="alert"><b>' + data + '</b> join in room</span>'));
+});
+
+// When server call 'I enter in room', print just for destination.
+socket.on('I enter in room', function (data) {
+  $('#messages').append($('<li>').html('<span class="alert">You join in room <b>' + data + '</b></span>'));
+});
+
+// When server call 'leave room', print just for destination.
+socket.on('leave room', function (data) {
+  $('#messages').append($('<li>').html('<span class="alert"><b>' + data + '</b> leave room</span>'));
+});
+
+// When server call 'I leave room', print just for destination.
+socket.on('I leave room', function (data) {
+  $('#messages').append($('<li>').html('<span class="alert">You leave room <b>' + data + '</b></span>'));
 });
 
 // Alert client when server shuts down.
