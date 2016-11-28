@@ -120,10 +120,12 @@ socket.on('I leave room', function (data) {
 
 // Alert client when server shuts down.
 socket.on('disconnect', function () {
-  alert('Failed to connect to server');
+  alert('Failed to connect to server, wait the server back alert or try again later');
   // Alert client when server is back.
   socket.on('connect', function() {
     alert('Server is back');
+    // Reload the page, because of we don't have a Data Base
+    window.location.reload(false);
   })
 });
 
