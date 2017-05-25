@@ -3,6 +3,9 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 
+// Setup MongoDB as DataBase
+var mongoose = require('mongoose');
+
 //Initialize a new instance of socket.io by passing the the HTTP server object.
 var io = require('socket.io')(http);
 
@@ -17,6 +20,23 @@ var numUsers = 0;
 var users = {};
 // Rooms which are currently available in chat.
 var rooms = ['Dijkstra','Turing','Rejewski'];
+
+// Connect DataBase
+mongoose.connect('mongodb://localhost/chat', function(err){
+  if(err) {
+    console.log(err);
+  } else {
+    console.log('Connected to MongoDB!');
+  }
+});
+
+var chatSchema = mongoose.Schema({
+  nickname: String,
+  msg: String,
+  created: {type: Date, default: Date.now}
+});
+
+var Chat = mongoose.model('Message', chatSchema);
 
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
@@ -89,10 +109,15 @@ io.on('connection', function (socket){
         callback('Error! Please enter a message for your whisper.');
       }
     } else {
-      // Log the message
-      console.log('[ROOM ' + socket.room + '] ' + socket.nickname + ' public message: ' + msg);
-  	  // Brodcasting message, tell all clients to execute 'chat message'.
-  	  io.in(socket.room).emit('chat message', {msg: msg, nickname: socket.nickname});
+      // Save message in DataBase
+      var newMessage = new Chat({msg: msg, nickname: socket.nickname});
+      newMessage.save(function(err){
+        if(err) throw err;
+        // Log the message
+        console.log('[ROOM ' + socket.room + '] ' + socket.nickname + ' public message: ' + msg);
+  	    // Brodcasting message, tell all clients to execute 'chat message'.
+  	    io.in(socket.room).emit('chat message', {msg: msg, nickname: socket.nickname});
+      });
     }
  	});
 
