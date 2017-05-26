@@ -44,7 +44,7 @@ $('#send-message').submit(function(){
 socket.on('usernames', function (data) {
   // data is a vector with all usernames.
   var html = '';
-  for (i = 0; i < data.length; i++) {
+  for (var i = 0; i < data.length; i++) {
     html += '<span id="text-selector" onclick="privateMessage($(this).text())">' + data[i] + '</span>'
   }
   $('#users').html(html);
@@ -54,6 +54,13 @@ socket.on('usernames', function (data) {
 socket.on('stats', function (data) {
   console.log('Connected users:', data.numUsers)
   $('#counter').html("Connected users: " + data.numUsers);
+});
+
+socket.on('load old messages', function (docs) {
+  for(var i = docs.length-1; i >= 0; i--) {
+    $('#messages').append($('<li>').html('<b>' + docs[i].nickname + ': </b>' + docs[i].msg));
+    autoScroolY();
+  }
 });
 
 // When server call 'chat message', print in page.

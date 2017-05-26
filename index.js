@@ -40,6 +40,13 @@ var Chat = mongoose.model('Message', chatSchema);
 
 // Listen on the connection event for incoming sockets.
 io.on('connection', function (socket){
+  var query = Chat.find({});
+  query.sort('-created').limit(8).exec(function(err, docs){
+    if(err) throw err;
+    console.log('Sending old messages...');
+    socket.emit('load old messages', docs);
+  });
+
 	// When client call 'new user', verify if the nickname was alredy taken.
 	socket.on('new user', function (data, callback) {
 		if (data.nickname in users || data.nickname === '') {
